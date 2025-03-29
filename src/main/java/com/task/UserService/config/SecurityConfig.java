@@ -53,8 +53,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/delete").hasRole("ADMIN")
-                        .requestMatchers("/api/users/all").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/delete").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/all").hasRole("ADMIN")
                         .requestMatchers(
                                 new AntPathRequestMatcher("/swagger-ui/**"),
                                 new AntPathRequestMatcher("/v3/api-docs/**"),
