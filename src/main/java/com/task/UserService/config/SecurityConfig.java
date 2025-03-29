@@ -73,8 +73,8 @@ public class SecurityConfig {
        public UserDetailsService userDetailsService() {
         log.info("Creating user details service");
         InMemoryUserDetailsManager in = new InMemoryUserDetailsManager();
-        in.createUser(User.withUsername("admin").password("admin").roles("ADMIN", "USER").build());
-        in.createUser(User.withUsername("user").password("user").roles("USER").build());
+        in.createUser(User.withUsername("admin").password("admin123").roles("ADMIN", "USER").build());
+        in.createUser(User.withUsername("user").password("user123").roles("USER").build());
         return in;
 //
     }
