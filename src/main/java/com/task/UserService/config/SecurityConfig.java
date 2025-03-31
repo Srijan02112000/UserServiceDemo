@@ -1,6 +1,7 @@
 package com.task.UserService.config;
 
 
+import com.task.UserService.service.impl.UserDetailsServiceimpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.proxy.NoOp;
@@ -34,6 +35,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -47,6 +49,11 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final UserDetailsServiceimpl userDetailsService;
+
+    public SecurityConfig(UserDetailsServiceimpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -73,16 +80,21 @@ public class SecurityConfig {
        public UserDetailsService userDetailsService() {
         log.info("Creating user details service");
         InMemoryUserDetailsManager in = new InMemoryUserDetailsManager();
-        in.createUser(User.withUsername("admin").password("admin123").roles("ADMIN", "USER").build());
-        in.createUser(User.withUsername("user").password("user123").roles("USER").build());
+        in.createUser(User.withUsername("admin@gmail.com").password("$2a$10$epn0tpIbEXbH.YBWxymkKOUN8p1aU1jFp6/EoTl1D/rNcEDCtNpDK").roles("ADMIN", "USER").build());
+        in.createUser(User.withUsername("user@gmail.com").password("$2a$10$o3dr79AU/wHUGJy1znGUhumcagM6JRivGpsRqiNDvy0Xc4ukF6vu6").roles("USER").build());
         return in;
-//
+
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService()); // for using preloaded data UserDetailsService data
+//        provider.setUserDetailsService(userDetailsService); for taking data from dB to UserDetailsService
 
         return provider;
     }
